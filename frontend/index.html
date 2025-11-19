@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DOKS Mini App</title>
+    <style>body{font-family:Arial;max-width:700px;margin:2rem auto;padding:0 1rem}input{width:80%}button{padding:6px 10px}</style>
+  </head>
+  <body>
+    <h1>Notes (DOKS demo)</h1>
+    <form id="f"><input id="text" placeholder="Write a short note" /> <button>Add</button></form>
+    <ul id="list"></ul>
+
+    <script>
+      // Use relative API path; nginx will proxy /api to the backend service inside the cluster
+      const API = '/api/notes';
+      async function load(){
+        const res = await fetch(API);
+        const items = await res.json();
+        const list = document.getElementById('list');
+        list.innerHTML = items.map(i=>`<li>${i.text}</li>`).join('')
+      }
+      document.getElementById('f').addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const text = document.getElementById('text').value;
+        if(!text) return;
+        await fetch(API, {method:'POST',headers:{'content-type':'application/json'}, body: JSON.stringify({text})});
+        document.getElementById('text').value = '';
+        load();
+      });
+      load();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+# name: Deploy to DOKS
+
+# on:
+#   push:
+#     branches: [ main, master ]
+
+# jobs:
+#   deploy:
+#     name: Deploy (apply k8s manifests)
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Install doctl and authenticate
+#         uses: digitalocean/action-doctl@v2
+#         with:
+#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+#       - name: Save kubeconfig for cluster
+#         # Requires secret DO_CLUSTER_NAME (the name of your DOKS cluster)
+#         run: doctl kubernetes cluster kubeconfig save "${{ secrets.DO_CLUSTER_NAME }}"
+
+#       - name: Setup kubectl
+#         uses: azure/setup-kubectl@v3
+#         with:
+#           version: 'latest'
+
+#       - name: Apply Kubernetes manifests
+#         env:
+#           KUBECONFIG: ${{ runner.temp }}/kubeconfig
+#         run: |
+#           # Apply manifests (manifests should use image tags like :latest)
+#           kubectl apply -f doks-tutorial/k8s/
+
+#           # Restart deployments to force pulling images tagged :latest
+#           kubectl rollout restart deployment/frontend || true
+#           kubectl rollout restart deployment/backend || true
+
+#           # Wait for rollouts to complete (optional)
+#           kubectl rollout status deployment/frontend --timeout=120s || true
+#           kubectl rollout status deployment/backend --timeout=120s || true
+
+#       - name: Show services
+#         run: kubectl get svc -n default
