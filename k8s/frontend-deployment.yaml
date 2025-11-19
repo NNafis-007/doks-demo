@@ -8,9 +8,8 @@ spec:
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30001
 
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 apiVersion: apps/v1
